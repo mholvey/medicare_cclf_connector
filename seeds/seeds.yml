@@ -4,7 +4,7 @@ seeds:
   - name: medicare_state_fips
     config:
       database:  "{{ var('output_database') }}"
-      schema:  "{{ var('output_schema')}}"
+      schema:  "{{ var('terminology_schema')}}"
       tags: terminology
       column_types:
-        fips_code: varchar(4)
+        fips_code: string

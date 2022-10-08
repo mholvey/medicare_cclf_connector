@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 select
   claim_id
   ,claim_line_number
