@@ -5,9 +5,6 @@ models:
       description: >
         Mapping of professional claims to 
         Tuva claims preprocessing input layer
-      config:
-        database: "{{ var('output_database')}}"
-        schema: "{{ var('output_schema')}}"
       tests:
          - unique:
              column_name: "(claim_id || '-' || claim_line_number)"

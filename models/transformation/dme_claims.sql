@@ -132,4 +132,4 @@ select
     ,cast(NULL as date) as procedure_date_23
     ,cast(NULL as date) as procedure_date_24
     ,cast(NULL as date) as procedure_date_25
-from {{ var('partb_dme')}} h
+from {{ source('cclf', 'partb_dme') }} h

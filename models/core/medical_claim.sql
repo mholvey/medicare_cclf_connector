@@ -132,7 +132,7 @@ select
   ,procedure_date_23
   ,procedure_date_24
   ,procedure_date_25
-from {{ ref('institutional_claims')}}
+from {{ ref('institutional_claims') }}
 
 union all
 
@@ -270,7 +270,7 @@ select
   ,procedure_date_23
   ,procedure_date_24
   ,procedure_date_25
-from {{ ref('physician_claims')}}
+from {{ ref('physician_claims') }}
 
 union all
 
@@ -408,4 +408,4 @@ select
   ,procedure_date_23
   ,procedure_date_24
   ,procedure_date_25
-from {{ ref('dme_claims')}}
+from {{ ref('dme_claims') }}
