@@ -21,7 +21,7 @@ select
       	  when bene_death_dt is null then 0
 		  else 1
      end as int) as deceased_flag
-    ,cast(bene_death_dt as datetime) as death_date
+    ,cast(bene_death_dt as datetime) as deceased_date
     ,cast('medicare' as varchar) as payer
     ,cast('medicare' as varchar) as payer_type
     ,cast(bene_dual_stus_cd as varchar) as dual_status
