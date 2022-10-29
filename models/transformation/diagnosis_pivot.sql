@@ -1,4 +1,9 @@
-with diagnois_pivot as(
+with part_a_diagnosis_code as (
+    select *
+    from {{ ref(var('tuva__medicare_cclf_connector__parta_diagnosis_code', 'parta_diagnosis_code')) }}
+),
+
+diagnois_pivot as(
   select 
       *
   from 
@@ -8,7 +13,7 @@ with diagnois_pivot as(
           ,clm_dgns_cd
           ,clm_val_sqnc_num
           ,dgns_prcdr_icd_ind
-       from {{ source('cclf', 'parta_diagnosis_code') }}
+       from part_a_diagnosis_code
        )
   pivot(
       max(clm_dgns_cd) for clm_val_sqnc_num in ('1'
@@ -51,7 +56,7 @@ with diagnois_pivot as(
           ,bene_mbi_id
           ,clm_poa_ind
           ,clm_val_sqnc_num
-       from {{ source('cclf', 'parta_diagnosis_code') }}
+       from part_a_diagnosis_code
        )
   pivot(
       max(clm_poa_ind) for clm_val_sqnc_num in ('1'

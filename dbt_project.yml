@@ -18,21 +18,3 @@ clean-targets:
 models:
   tuva_medicare_cclf_connector:
     +materialized: view
-
-#vars:
-#  tuva_medicare_cclf_connector:
-    # TODO audit all variables - many may no longer be needed
-    # name of the database where sources feeding this project are stored
-#    tuva_medicare_cclf_connector_database: medicare_claims
-    # name of the schema where sources feeding this project is stored
-#    tuva_medicare_cclf_connector_schema:  cclf
-
-    # Override these tables if needed.
-#    tuva_medicare_cclf_connector_partb_dme_table_name: partb_dme
-#    tuva_medicare_cclf_connector_parta_claims_header_table_name: parta_claims_header
-#    tuva_medicare_cclf_connector_parta_diagnosis_code_table_name: parta_diagnosis_code
-#    tuva_medicare_cclf_connector_parta_claims_revenue_center_detail_table_name: parta_claims_revenue_center_detail
-#    tuva_medicare_cclf_connector_beneficiary_demographics_table_name: beneficiary_demographics
-#    tuva_medicare_cclf_connector_partb_physicians_table_name: partb_physicians
-#    tuva_medicare_cclf_connector_parta_procedure_code_table_name: parta_procedure_code
-

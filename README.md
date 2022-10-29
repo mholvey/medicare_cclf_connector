@@ -18,17 +18,24 @@ This connector transforms raw Medicare CCLF claims data into the Tuva Claims Inp
 [Here](https://docs.getdbt.com/dbt-cli/installation) are instructions for installing dbt.
 
 ## Getting Started
-Complete the following steps to configure the package to run in your environment.
 
-1. [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this repo to your local machine or environment
-2. Update the dbt_project.yml file to use the dbt profile connected to your data warehouse.
-3. Run dbt build command while specifying the specific database and schema locations you want to read/write data fromt/to: 
+By default this package looks for tables conforming to this data model.
+By setting these variables in your own `dbt_project.yml`, you may override the default table names.
 
-    > dbt build --vars '{key: value, input_database: syntegra_synthetic_sample, input_schema: cclf, output_database: demo, output_schema: claims_input_layer}'
+This is particularly useful if you have multiple claims data sets you wish to run through The Tuva Project.
+**TODO fill out examples**
 
-Note: The source data table names need to match the table names in [sources.yml](models/sources.yml).  These table names match the [Medicare CCLF data dictionary](https://www.cms.gov/files/document/cclf-file-data-elements-resource.pdf).  If you rename any tables make sure you:
-- Update table names in sources.yml
-- Update table name in medical_claim and eligibility jinja function
+```yaml
+vars:
+   
+  tuva__medicare_cclf_connector__beneficiary_demographics: beneficiary_demographics
+  tuva__medicare_cclf_connector__parta_diagnosis_code: parta_diagnosis_code
+  tuva__medicare_cclf_connector__parta_claims_header: parta_claims_header
+  tuva__medicare_cclf_connector__parta_claims_revenue_center_detail: parta_claims_revenue_center_detail
+  tuva__medicare_cclf_connector__partb_physicians: partb_physicians
+  tuva__medicare_cclf_connector__partb_dme: partb_dme
+  tuva__medicare_cclf_connector__parta_procedure_code: parta_procedure_code
+```
 
 ## Contributions
 Have an opinion on the mappings? Notice any bugs when installing and running the package? 

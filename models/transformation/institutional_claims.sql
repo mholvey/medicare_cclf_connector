@@ -1,3 +1,13 @@
+with part_a_claims_header as (
+    select *
+    from {{ ref(var('tuva__medicare_cclf_connector__parta_claims_header', 'parta_claims_header')) }}
+),
+
+part_a_claims_revenue_center_detail as (
+    select *
+    from {{ ref(var('tuva__medicare_cclf_connector__parta_claims_revenue_center_detail', 'parta_claims_revenue_center_detail')) }} d
+)
+
 select
     cast(h.cur_clm_uniq_id as varchar) as claim_id
     ,cast(d.clm_line_num as int) as claim_line_number
@@ -132,8 +142,8 @@ select
     ,cast(px.procedure_date_23 as date) as procedure_date_23
     ,cast(px.procedure_date_24 as date) as procedure_date_24
     ,cast(px.procedure_date_25 as date) as procedure_date_25
-from {{ source('cclf', 'parta_claims_header') }} h
-inner join {{ source('cclf', 'parta_claims_revenue_center_detail') }} d
+from  part_a_claims_header h
+inner join part_a_claims_revenue_center_detail d
 	on h.cur_clm_uniq_id = d.cur_clm_uniq_id
 left join {{ ref('procedure_pivot') }} px
 	on h.cur_clm_uniq_id = px.cur_clm_uniq_id

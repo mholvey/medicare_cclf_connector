@@ -1,3 +1,8 @@
+with part_b_physicians as (
+    select *
+    from {{ ref(var('tuva__medicare_cclf_connector__partb_physicians', 'partb_physicians')) }}
+)
+
 select
     cast(h.cur_clm_uniq_id as varchar) as claim_id
     ,cast(h.clm_line_num as int) as claim_line_number
@@ -132,5 +137,5 @@ select
     ,cast(NULL as date) as procedure_date_23
     ,cast(NULL as date) as procedure_date_24
     ,cast(NULL as date) as procedure_date_25
-from {{ source('cclf', 'partb_physicians') }} h
+from part_b_physicians h
 

@@ -1,4 +1,9 @@
-with procedure_pivot as(
+with part_a_procedure_code as (
+    select *
+   from {{ ref(var('tuva__medicare_cclf_connector__parta_procedure_code', 'parta_procedure_code')) }}
+),
+
+procedure_pivot as(
   select 
       *
   from 
@@ -8,7 +13,7 @@ with procedure_pivot as(
           ,clm_prcdr_cd
           ,clm_val_sqnc_num
           ,dgns_prcdr_icd_ind
-       from {{ source('cclf', 'parta_procedure_code') }}
+       from part_a_procedure_code
        )
   pivot(
       max(clm_prcdr_cd) for clm_val_sqnc_num in (1
@@ -51,7 +56,7 @@ with procedure_pivot as(
           ,bene_mbi_id
           ,clm_prcdr_prfrm_dt
           ,clm_val_sqnc_num
-       from {{ source('cclf', 'parta_procedure_code') }}
+       from part_a_procedure_code
        )
   pivot(
       max(clm_prcdr_prfrm_dt) for clm_val_sqnc_num in (1
