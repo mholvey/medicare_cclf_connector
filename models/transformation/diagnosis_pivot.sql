@@ -4,6 +4,7 @@ with diagnois_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
         , {{ dbt_utils.pivot(
               column='clm_val_sqnc_num'
             , values=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25']
@@ -18,6 +19,7 @@ with diagnois_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
 
 ),
 
@@ -27,6 +29,7 @@ poa_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
         , {{ dbt_utils.pivot(
               column='clm_val_sqnc_num'
             , values=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25']
@@ -41,6 +44,7 @@ poa_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
 
 )
 
@@ -98,8 +102,10 @@ select
     , poa.diagnosis_poa_23
     , poa.diagnosis_poa_24
     , poa.diagnosis_poa_25
+    , dx.data_source
 from diagnois_pivot as dx
 inner join poa_pivot as poa
 	on dx.cur_clm_uniq_id = poa.cur_clm_uniq_id
+	and dx.data_source = poa.data_source
 /* filtering out null values from seed file */
 where dx.cur_clm_uniq_id is not null

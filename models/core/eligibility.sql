@@ -21,21 +21,18 @@ with demographics as (
         , geo_zip_plc_name
         , bene_fips_state_cd
         , bene_zip_cd
-    from {{ source('cclf','beneficiary_demographics') }}
+        , data_source
+    from {{ ref('beneficiary_demographics') }}
 
 ),
 
-fips_state as (
 
-    select * from {{ ref('terminology__ssa_fips_state') }}
-
-),
 
 add_row_num as (
 
     select *
          , row_number() over (
-             partition by bene_mbi_id
+             partition by bene_mbi_id, data_source
              order by bene_member_month
            ) as row_num
     from demographics
@@ -49,9 +46,10 @@ add_lag_enrollment as (
         , bene_member_month
         , row_num
         , lag(bene_member_month) over (
-            partition by bene_mbi_id
+            partition by bene_mbi_id, data_source
             order by row_num
           ) as lag_enrollment
+        , data_source
     from add_row_num
 
 ),
@@ -64,6 +62,7 @@ calculate_lag_diff as (
         , row_num
         , lag_enrollment
         , {{ datediff('lag_enrollment', 'bene_member_month', 'month') }} as lag_diff
+        , data_source
     from add_lag_enrollment
 
 ),
@@ -80,6 +79,7 @@ calculate_gaps as (
             when lag_diff > 1 then 1
             else 0
           end as gap_flag
+        , data_source
     from calculate_lag_diff
 
 ),
@@ -94,10 +94,11 @@ calculate_groups as (
         , lag_diff
         , gap_flag
         , sum(gap_flag) over (
-            partition by bene_mbi_id
+            partition by bene_mbi_id, data_source
             order by row_num
             rows between unbounded preceding and current row
           ) as row_group
+        , data_source
     from calculate_gaps
 
 ),
@@ -110,16 +111,17 @@ enrollment_span as (
         , min(bene_member_month) as enrollment_start_date
         , max(bene_member_month) as enrollment_end_date_max
         , last_day(max(bene_member_month)) as enrollment_end_date_last
+        , data_source
     from calculate_groups
-    group by bene_mbi_id, row_group
+    group by bene_mbi_id, row_group, data_source
 
 ),
 
 joined as (
 
     select
-          {{ cast_string_or_varchar('enrollment_span.bene_mbi_id') }} as patient_id
-        , {{ cast_string_or_varchar('enrollment_span.bene_mbi_id') }} as member_id
+          cast( enrollment_span.bene_mbi_id as {{ dbt.type_string() }} ) as patient_id
+        , cast( enrollment_span.bene_mbi_id as {{ dbt.type_string() }} ) as member_id
         , case demographics.bene_sex_cd
             when '0' then 'unknown'
             when '1' then 'male'
@@ -144,21 +146,22 @@ joined as (
         , enrollment_span.enrollment_end_date_last as enrollment_end_date
         , 'medicare' as payer
         , 'medicare' as payer_type
-        , {{ cast_string_or_varchar('demographics.bene_dual_stus_cd') }} as dual_status_code
-        , {{ cast_string_or_varchar('demographics.bene_mdcr_stus_cd') }} as medicare_status_code
-        , {{ cast_string_or_varchar('demographics.bene_1st_name') }} as first_name
-        , {{ cast_string_or_varchar('demographics.bene_last_name') }} as last_name
-        , {{ cast_string_or_varchar('demographics.bene_line_1_adr') }} as address
-        , {{ cast_string_or_varchar('demographics.geo_zip_plc_name') }} as city
-        , {{ cast_string_or_varchar('fips_state.ssa_fips_state_name') }} as state
-        , {{ cast_string_or_varchar('demographics.bene_zip_cd') }} as zip_code
-        , {{ cast_string_or_varchar('NULL') }} as phone
-        , '{{ var("data_source")}}' as data_source
+        , cast(demographics.bene_dual_stus_cd as {{ dbt.type_string() }} ) as dual_status_code
+        , cast(demographics.bene_mdcr_stus_cd as {{ dbt.type_string() }} ) as medicare_status_code
+        , cast(demographics.bene_1st_name as {{ dbt.type_string() }} ) as first_name
+        , cast(demographics.bene_last_name as {{ dbt.type_string() }} ) as last_name
+        , cast(demographics.bene_line_1_adr as {{ dbt.type_string() }} ) as address
+        , cast(demographics.geo_zip_plc_name as {{ dbt.type_string() }} ) as city
+        , cast(fips_state.ssa_fips_state_name as {{ dbt.type_string() }} ) as state
+        , cast(demographics.bene_zip_cd as {{ dbt.type_string() }} ) as zip_code
+        , cast(NULL as {{ dbt.type_string() }} ) as phone
+        , demographics.data_source as data_source
     from enrollment_span
          left join demographics
             on enrollment_span.bene_mbi_id = demographics.bene_mbi_id
             and enrollment_span.enrollment_end_date_max = demographics.bene_member_month
-         left join fips_state
+            and enrollment_span.data_source = demographics.data_source
+         left join {{ ref('ssa_fips_state') }} as fips_state
             on demographics.bene_fips_state_cd = fips_state.ssa_fips_state_code
 
 )

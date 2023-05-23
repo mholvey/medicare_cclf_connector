@@ -4,6 +4,7 @@ with procedure_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
         , {{ dbt_utils.pivot(
               column='clm_val_sqnc_num'
             , values=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25']
@@ -18,6 +19,7 @@ with procedure_pivot as (
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
 
 ),
 
@@ -27,6 +29,7 @@ date_pivot as(
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
+        , data_source
         , {{ dbt_utils.pivot(
               column='clm_val_sqnc_num'
             , values=['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25']
@@ -41,7 +44,7 @@ date_pivot as(
           cur_clm_uniq_id
         , bene_mbi_id
         , dgns_prcdr_icd_ind
-
+        , data_source
 )
 
 select
@@ -98,8 +101,10 @@ select
     , d.procedure_date_23
     , d.procedure_date_24
     , d.procedure_date_25
+    , px.data_source
 from procedure_pivot px
 inner join date_pivot d
 	on px.cur_clm_uniq_id = d.cur_clm_uniq_id
+	and px.data_source = d.data_source
 /* filtering out null values from seed file */
 where px.cur_clm_uniq_id is not null

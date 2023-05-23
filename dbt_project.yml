@@ -7,35 +7,35 @@ profile: 'default'
 
 ## Variables affecting the configuration of this project and the Tuva Project
 ## packages are below.
-vars:
+#vars:
 
 #########################################
 #### Medicare CCLF Project Variables ####
 #########################################
 
 ## Name identifying this source of data in output tables:
-  data_source: cclf             
-
-## Input Data Configurations:
-## Set the input_database variable and input_schema variable to the database
-## and schema where the raw cclf data is stored.
-  input_database: source_data  
-  input_schema: cclf                          
-
-## This project expects 7 standard cclf input tables with the following names.
-## If your tables have different names, adjust the values of the variables 
-## below accordingly.
-  beneficiary_demographics_table: beneficiary_demographics
-  parta_claims_header_table: parta_claims_header
-  parta_claims_revenue_center_detail_table: parta_claims_revenue_center_detail
-  parta_diagnosis_code_table: parta_diagnosis_code
-  parta_procedure_code_table: parta_procedure_code
-  partb_physicians_table: partb_physicians
-  partb_dme_table: partb_dme               
+#  data_source: cclf
+#
+### Input Data Configurations:
+### Set the input_database variable and input_schema variable to the database
+### and schema where the raw cclf data is stored.
+#  input_database: source_data
+#  input_schema: cclf
+#
+### This project expects 7 standard cclf input tables with the following names.
+### If your tables have different names, adjust the values of the variables
+### below accordingly.
+#  beneficiary_demographics_table: beneficiary_demographics
+#  parta_claims_header_table: parta_claims_header
+#  parta_claims_revenue_center_detail_table: parta_claims_revenue_center_detail
+#  parta_diagnosis_code_table: parta_diagnosis_code
+#  parta_procedure_code_table: parta_procedure_code
+#  partb_physicians_table: partb_physicians
+#  partb_dme_table: partb_dme
 
 ## Set the medicare_cclf_connector_schema variable to tell dbt where you want to write 
 ## the cclf data that has been transformed into the Tuva Claims Data Model format.
-  medicare_cclf_connector_schema: claims_common 
+#  medicare_cclf_connector_schema: claims_common
 
 ########################################
 #### Tuva Project Package Variables ####
@@ -45,20 +45,20 @@ vars:
 ## These variables tell the Tuva Project which packages you want
 ## to enable.  To enable a package set it to true, to disable a 
 ## package set it to false.
-  claims_preprocessing_enabled: true
-  cms_chronic_conditions_enabled: true
-  data_profiling_enabled: true 
-  pmpm_enabled: true
-  readmissions_enabled: true
-  terminology_enabled: true
-  tuva_chronic_conditions_enabled: true
+#  claims_preprocessing_enabled: true
+#  cms_chronic_conditions_enabled: true
+#  data_profiling_enabled: true
+#  pmpm_enabled: true
+#  readmissions_enabled: true
+#  terminology_enabled: true
+#  tuva_chronic_conditions_enabled: true
 
 
 ## Target Database Variable:
 ## This variable tells the Tuva Project where to write the 
 ## output data to.  You must create this database in your
 ## data warehouse before running the Tuva Project.
-  tuva_database: tuva
+#  tuva_database: tuva
 
 
 ## Optional Configuration Variables:
@@ -110,4 +110,6 @@ models:
     +materialized: view
     core:
       +materialized: table
+    input:
+      +materialized: ephemeral
 
