@@ -1,14 +1,13 @@
-name: 'medicare_cclf_connector'
-version: '0.1.2'
+name: "medicare_cclf_connector"
+version: "0.1.2"
 config-version: 2
 
 profile: default
 
 vars:
-
   ## Set the database and schema where raw CCLF data is stored
-  input_database: default
-  input_schema: default
+  input_database: FIVETRAN_DATABSE
+  input_schema: CCLF_S3
 
   claims_enabled: true
 
@@ -23,7 +22,6 @@ target-path: "target"
 clean-targets:
   - "target"
   - "dbt_packages"
-
 # models:
 #   medicare_cclf_connector:
 #     +database: default
