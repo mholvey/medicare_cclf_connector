@@ -6,7 +6,7 @@ profile: default
 
 vars:
   ## Set the database and schema where raw CCLF data is stored
-  input_database: FIVETRAN_DATABSE
+  input_database: FIVETRAN_DATABASE
   input_schema: CCLF_S3
 
   claims_enabled: true

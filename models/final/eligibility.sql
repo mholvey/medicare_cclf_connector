@@ -7,22 +7,23 @@
 with demographics as (
 
     select
-          bene_mbi_id
-        , cast(bene_sex_cd as {{ dbt.type_string() }} ) as bene_sex_cd
-        , cast(bene_race_cd as {{ dbt.type_string() }} ) as bene_race_cd
-        , bene_dob
-        , bene_death_dt
-        , {{ try_to_cast_date('bene_member_month', 'YYYY-MM-DD') }} as bene_member_month
-        , bene_dual_stus_cd
-        , bene_mdcr_stus_cd
-        , bene_orgnl_entlmt_rsn_cd
-        , bene_1st_name
-        , bene_last_name
-        , bene_line_1_adr
-        , geo_zip_plc_name
-        , cast(bene_fips_state_cd as {{ dbt.type_string() }} ) as bene_fips_state_cd
-        , bene_zip_cd
-    from {{ source('medicare_cclf','beneficiary_demographics') }}
+          MEDICARE_BENEFICIARY_IDENTIFIER as bene_mbi_id
+        , cast(BENEFICIARY_SEX_CODE as {{ dbt.type_string() }} ) as bene_sex_cd
+        , cast(BENEFICIARY_RACE_CODE as {{ dbt.type_string() }} ) as bene_race_cd
+        , BENEFICIARY_DATE_OF_BIRTH
+        , BENEFICIARY_DEATH_DATE
+        , {{ try_to_cast_date('BENE_ENTITLEMENT_PART_A_BEGIN_DATE', 'YYYY-MM-DD') }} as bene_member_month
+        {# , {{ try_to_cast_date('bene_member_month', 'YYYY-MM-DD') }} as bene_member_month #}
+        , BENEFICIARY_DUAL_STATUS_CODE as bene_dual_stus_cd
+        , BENEFICIARY_MEDICARE_STATUS_CODE as bene_mdcr_stus_cd
+        , BENEFICIARY_ORIGINAL_ENTITLEMENT_REASON_CODE as bene_orgnl_entlmt_rsn_cd
+        , BENEFICIARY_FIRST_NAME as bene_1st_name
+        , BENEFICIARY_LAST_NAME as bene_last_name
+        , BENEFICIARY_DERIVED_MAILING_LINE_ONE_ADDRESS as bene_line_1_adr
+        , BENEFICIARY_ZIP_CODE as geo_zip_plc_name
+        , cast(BENEFICIARY_FIPS_STATE_CODE as bene_fips_state_cd as {{ dbt.type_string() }} ) as bene_fips_state_cd
+        , BENEFICIARY_ZIP_CODE as bene_zip_cd
+    from {{ source('medicare_cclf','C_8') }}
 
 ),
 

@@ -1,54 +1,54 @@
 select
-      cast(cur_clm_uniq_id as {{ dbt.type_string() }} ) as claim_id
-    , cast(clm_line_num as integer) as claim_line_number
+      cast(CURRENT_CLAIM_UNIQUE_IDENTIFIER as {{ dbt.type_string() }} ) as claim_id
+    , cast(CLAIM_LINE_NUMBER as integer) as claim_line_number
     , 'professional' as claim_type
-    , cast(bene_mbi_id as {{ dbt.type_string() }} ) as patient_id
-    , cast(bene_mbi_id as {{ dbt.type_string() }} ) as member_id
-    , {{ try_to_cast_date('clm_from_dt', 'YYYY-MM-DD') }} as claim_start_date
-    , {{ try_to_cast_date('clm_thru_dt', 'YYYY-MM-DD') }} as claim_end_date
-    , {{ try_to_cast_date('clm_line_from_dt', 'YYYY-MM-DD') }} as claim_line_start_date
-    , {{ try_to_cast_date('clm_line_thru_dt', 'YYYY-MM-DD') }} as claim_line_end_date
+    , cast(MEDICARE_BENEFICIARY_IDENTIFIER as {{ dbt.type_string() }} ) as patient_id
+    , cast(MEDICARE_BENEFICIARY_IDENTIFIER as {{ dbt.type_string() }} ) as member_id
+    , {{ try_to_cast_date('CLAIM_FROM_DATE', 'YYYY-MM-DD') }} as claim_start_date
+    , {{ try_to_cast_date('CLAIM_THRU_DATE', 'YYYY-MM-DD') }} as claim_end_date
+    , {{ try_to_cast_date('CLAIM_LINE_FROM_DATE', 'YYYY-MM-DD') }} as claim_line_start_date
+    , {{ try_to_cast_date('CLAIM_LINE_THRU_DATE', 'YYYY-MM-DD') }} as claim_line_end_date
     , cast(NULL as date) as admission_date
     , cast(NULL as date) as discharge_date
     , cast(NULL as {{ dbt.type_string() }} ) as admit_source_code
     , cast(NULL as {{ dbt.type_string() }} ) as admit_type_code
     , cast(NULL as {{ dbt.type_string() }} ) as discharge_disposition_code
-    , cast(clm_pos_cd as {{ dbt.type_string() }} ) as place_of_service_code
+    , cast(CLAIM_PLACE_OF_SERVICE_CODE as {{ dbt.type_string() }} ) as place_of_service_code
     , cast(NULL as {{ dbt.type_string() }} ) as bill_type_code
     , cast(NULL as {{ dbt.type_string() }} ) as ms_drg_code
     , cast(NULL as {{ dbt.type_string() }} ) as apr_drg_code
     , cast(NULL as {{ dbt.type_string() }} ) as revenue_center_code
-    , cast(clm_line_srvc_unit_qty as integer) as service_unit_quantity
-    , cast(clm_line_hcpcs_cd as {{ dbt.type_string() }} ) as hcpcs_code
-    , cast(hcpcs_1_mdfr_cd as {{ dbt.type_string() }} ) as hcpcs_modifier_1
-    , cast(hcpcs_2_mdfr_cd as {{ dbt.type_string() }} ) as hcpcs_modifier_2
-    , cast(hcpcs_3_mdfr_cd as {{ dbt.type_string() }} ) as hcpcs_modifier_3
-    , cast(hcpcs_4_mdfr_cd as {{ dbt.type_string() }} ) as hcpcs_modifier_4
-    , cast(hcpcs_5_mdfr_cd as {{ dbt.type_string() }} ) as hcpcs_modifier_5
-    , cast(rndrg_prvdr_npi_num as {{ dbt.type_string() }} ) as rendering_npi
+    , cast(CLAIM_LINE_SERVICE_UNIT_QUANTITY as integer) as service_unit_quantity
+    , cast(HCPCS_CODE as {{ dbt.type_string() }} ) as hcpcs_code
+    , cast(HCPCS_FIRST_MODIFIER_CODE as {{ dbt.type_string() }} ) as hcpcs_modifier_1
+    , cast(HCPCS_SECOND_MODIFIER_CODE as {{ dbt.type_string() }} ) as hcpcs_modifier_2
+    , cast(HCPCS_THIRD_MODIFIER_CODE as {{ dbt.type_string() }} ) as hcpcs_modifier_3
+    , cast(HCPCS_FOURTH_MODIFIER_CODE as {{ dbt.type_string() }} ) as hcpcs_modifier_4
+    {# , cast(HCPCS_FIFTH_MODIFIER_CODE as {{ dbt.type_string() }} ) as hcpcs_modifier_5 #}
+    , cast(CLAIM_RENDERING_PROVIDER_NPI_NUMBER as {{ dbt.type_string() }} ) as rendering_npi
     , cast(NULL as {{ dbt.type_string() }} ) as billing_npi
     , cast(NULL as {{ dbt.type_string() }} ) as facility_npi
     , cast(NULL as date) as paid_date
-    , {{ cast_numeric('clm_line_cvrd_pd_amt') }} as paid_amount
+    , {{ cast_numeric('CLAIM_LINE_NCH_PAYMENT_AMOUNT') }} as paid_amount
     , {{ cast_numeric('NULL') }} as total_cost_amount
-    , {{ cast_numeric('clm_line_alowd_chrg_amt') }} as allowed_amount
-    , {{ cast_numeric('clm_line_alowd_chrg_amt') }} as charge_amount
+    , {{ cast_numeric('CLAIM_LINE_ALLOWED_CHARGES_AMOUNT') }} as allowed_amount
+    , {{ cast_numeric('CLAIM_LINE_ALLOWED_CHARGES_AMOUNT') }} as charge_amount
     , case
-        when cast(dgns_prcdr_icd_ind as {{ dbt.type_string() }} ) = '0' then 'icd-10-pcs'
-        when cast(dgns_prcdr_icd_ind as {{ dbt.type_string() }} ) = '9' then 'icd-9-pcs'
-        else cast(dgns_prcdr_icd_ind as {{ dbt.type_string() }} ) end as diagnosis_code_type
-    , cast(clm_dgns_1_cd as {{ dbt.type_string() }} ) as diagnosis_code_1
-    , cast(clm_dgns_2_cd as {{ dbt.type_string() }} ) as diagnosis_code_2
-    , cast(clm_dgns_3_cd as {{ dbt.type_string() }} ) as diagnosis_code_3
-    , cast(clm_dgns_4_cd as {{ dbt.type_string() }} ) as diagnosis_code_4
-    , cast(clm_dgns_5_cd as {{ dbt.type_string() }} ) as diagnosis_code_5
-    , cast(clm_dgns_6_cd as {{ dbt.type_string() }} ) as diagnosis_code_6
-    , cast(clm_dgns_7_cd as {{ dbt.type_string() }} ) as diagnosis_code_7
-    , cast(clm_dgns_8_cd as {{ dbt.type_string() }} ) as diagnosis_code_8
-    , cast(clm_dgns_9_cd as {{ dbt.type_string() }} ) as diagnosis_code_9
-    , cast(clm_dgns_10_cd as {{ dbt.type_string() }} ) as diagnosis_code_10
-    , cast(clm_dgns_11_cd as {{ dbt.type_string() }} ) as diagnosis_code_11
-    , cast(clm_dgns_12_cd as {{ dbt.type_string() }} ) as diagnosis_code_12
+        when cast(ICD_VERSION_INDICATOR as {{ dbt.type_string() }} ) = '0' then 'icd-10-pcs'
+        when cast(ICD_VERSION_INDICATOR as {{ dbt.type_string() }} ) = '9' then 'icd-9-pcs'
+        else cast(ICD_VERSION_INDICATOR as {{ dbt.type_string() }} ) end as diagnosis_code_type
+    , cast(CLAIM_DIAGNOSIS_FIRST_CODE as {{ dbt.type_string() }} ) as diagnosis_code_1
+    , cast(CLAIM_DIAGNOSIS_SECOND_CODE as {{ dbt.type_string() }} ) as diagnosis_code_2
+    , cast(CLAIM_DIAGNOSIS_THIRD_CODE as {{ dbt.type_string() }} ) as diagnosis_code_3
+    , cast(CLAIM_DIAGNOSIS_FOURTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_4
+    , cast(CLAIM_DIAGNOSIS_FIFTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_5
+    , cast(CLAIM_DIAGNOSIS_SIXTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_6
+    , cast(CLAIM_DIAGNOSIS_SEVENTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_7
+    , cast(CLAIM_DIAGNOSIS_EIGHTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_8
+    , cast(CLAIM_DIAGNOSIS_NINTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_9
+    , cast(CLAIM_DIAGNOSIS_TENTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_10
+    , cast(CLAIM_DIAGNOSIS_ELEVENTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_11
+    , cast(CLAIM_DIAGNOSIS_TWELFTH_CODE as {{ dbt.type_string() }} ) as diagnosis_code_12
     , cast(NULL as {{ dbt.type_string() }} ) as diagnosis_code_13
     , cast(NULL as {{ dbt.type_string() }} ) as diagnosis_code_14
     , cast(NULL as {{ dbt.type_string() }} ) as diagnosis_code_15
@@ -139,4 +139,4 @@ select
     , cast(NULL as date) as procedure_date_24
     , cast(NULL as date) as procedure_date_25
     , 'medicare cclf' as data_source
-from {{ source('medicare_cclf','partb_physicians')}}
+from {{ source('medicare_cclf','C_5')}}
